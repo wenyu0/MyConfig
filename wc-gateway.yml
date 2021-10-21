@@ -1,0 +1,57 @@
+#熔断机制
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+
+#负载均衡
+ribbon:
+  ConnectionTimeout: 3000
+  ReadTimeout: 3000
+
+#端口
+server:
+  port: 8080
+spring:
+  #该配置文件中的配置，对应的服务名称是wc-gateway
+  application:
+    name: wc-gateway,wc-redis
+  profiles:
+    active: dev
+#服务网关配置
+zuul:
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 3000
+  #路由规则
+  routes:
+    api-user:
+      path: /api/user/**
+      serviceId: wc-client-user
+      #防止网关转发请求后session失效
+      sensitiveHeaders: "*"
+    api-search:
+      path: /api/admin/**
+      serviceId: wc-client-admin
+      sensitiveHeaders: "*"
+    api-report:
+      path: /api/report/**
+      serviceId: wc-client-reporting
+      sensitiveHeaders: "*"
+
+#  routes:
+#    api-article:
+#      path: /api/article/**
+#      serviceId: article
+#    api-comment:
+#      path: /api/comment/**
+#      serviceId: comment
+#    api-index:
+#      path: /api/index/**
+#      serviceId: index
+#    api-user:
+#      path: /api/user/**
+#      serviceId: user
